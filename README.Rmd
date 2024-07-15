@@ -1,0 +1,66 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# LogicHAL
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of LogicHAL is to ...
+
+## Installation
+
+You can install the development version of LogicHAL like so:
+
+```{r LogicHAL_install,  eval = FALSE}
+remotes::install_github("blind-contours/LogicHAL@main")
+```
+
+## Example
+
+Consider the following minimal example in using LogicHAL to generate predictions and Logic Trees:
+
+```{r example}
+library(LogicHAL)
+
+# Generate example data
+set.seed(123)
+
+# Number of observations
+n <- 2000
+
+# Number of features
+p <- 100
+
+# Create a binary matrix with some correlation
+X <- matrix(rbinom(n * p, 1, 0.1), n, p)
+# Create column names
+colnames(X) <- paste0("var", 1:p)
+
+# Create a binary outcome based on a rule (var1 OR var8)
+Y <- as.numeric((X[, 1] | X[, 8]) & (X[, 34]))
+
+# Combine into a data frame
+df <- data.frame(X, outcome = Y)
+
+# Run LogicHAL
+result <- LogicHAL(data = df, outcome = "outcome", columns = colnames(X), max_trees = 2, max_depth = 3)
+
+# Print final model and trees used
+coef(result$model)
+
+```
+
+
