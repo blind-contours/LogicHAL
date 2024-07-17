@@ -45,12 +45,10 @@ Rcpp::List computeF1ScoresWithLogic(DataFrame data, CharacterVector columns, Int
   Rcpp::CharacterVector RuleAnd(m * (m - 1) / 2);
   Rcpp::CharacterVector RuleOr(m * (m - 1) / 2);
 
-
   Rcpp::NumericVector F1AndAnd(m * (m - 1) / 2, 0.0);
   Rcpp::NumericVector F1AndOr(m * (m - 1) / 2, 0.0);
   Rcpp::NumericVector F1OrAnd(m * (m - 1) / 2, 0.0);
   Rcpp::NumericVector F1OrOr(m * (m - 1) / 2, 0.0);
-
 
   Rcpp::CharacterVector RuleAndAnd(m * (m - 1) / 2);
   Rcpp::CharacterVector RuleAndOr(m * (m - 1) / 2);
@@ -90,8 +88,8 @@ Rcpp::List computeF1ScoresWithLogic(DataFrame data, CharacterVector columns, Int
       F1_indiv_ruleAnd[i] = f1_score(outcome, indiv_ruleAnd);
       F1_indiv_ruleOr[i] = f1_score(outcome, indiv_ruleOr);
 
-      Rule_indiv_And[i] = "(" + colnames[i] + " == 1) & (" + previous_rule_name + ")";
-      Rule_indiv_Or[i] = "(" + colnames[i] + " == 1) | (" + previous_rule_name + ")";
+      Rule_indiv_And[i] = "(" + colnames[i] + " == 1 & " + previous_rule_name + ")";
+      Rule_indiv_Or[i] = "(" + colnames[i] + " == 1 | " + previous_rule_name + ")";
     } else {
       F1_Individual[i] = f1_score(outcome, indiv_rule);
       RuleIndividual[i] = colnames[i] + " == 1";
@@ -106,17 +104,14 @@ Rcpp::List computeF1ScoresWithLogic(DataFrame data, CharacterVector columns, Int
           ruleOrOr[k] = (col1[k] | col2[k]) | prev_rule[k];
           ruleAndOr[k] = (col1[k] & col2[k]) | prev_rule[k];
           ruleOrAnd[k] = (col1[k] | col2[k]) & prev_rule[k];
-
         } else {
           ruleAnd[k] = col1[k] & col2[k];
           ruleOr[k] = col1[k] | col2[k];
         }
       }
 
-
       double f1_and = f1_score(outcome, ruleAnd);
       double f1_or = f1_score(outcome, ruleOr);
-
 
       double f1_and_and = f1_score(outcome, ruleAndAnd);
       double f1_and_or = f1_score(outcome, ruleAndOr);
@@ -132,13 +127,13 @@ Rcpp::List computeF1ScoresWithLogic(DataFrame data, CharacterVector columns, Int
       F1OrOr[idx] = f1_or_or;
 
       if (previous_rule.isNotNull()) {
-        RuleAndAnd[idx] = "(" + colnames[i] + " == 1) & (" + colnames[j] + " == 1) & (" + previous_rule_name + ")";
-        RuleAndOr[idx] = "(" + colnames[i] + " == 1) | (" + colnames[j] + " == 1) & (" + previous_rule_name + ")";
-        RuleOrAnd[idx] = "(" + colnames[i] + " == 1) & (" + colnames[j] + " == 1) | (" + previous_rule_name + ")";
-        RuleOrOr[idx] = "(" + colnames[i] + " == 1) | (" + colnames[j] + " == 1) | (" + previous_rule_name + ")";
+        RuleAndAnd[idx] = "((" + colnames[i] + " == 1 & " + colnames[j] + " == 1) & " + previous_rule_name + ")";
+        RuleAndOr[idx] = "((" + colnames[i] + " == 1 & " + colnames[j] + " == 1) | " + previous_rule_name + ")";
+        RuleOrAnd[idx] = "((" + colnames[i] + " == 1 | " + colnames[j] + " == 1) & " + previous_rule_name + ")";
+        RuleOrOr[idx] = "((" + colnames[i] + " == 1 | " + colnames[j] + " == 1) | " + previous_rule_name + ")";
       } else {
-        RuleAnd[idx] = "(" + colnames[i] + " == 1) & (" + colnames[j] + " == 1)";
-        RuleOr[idx] = "(" + colnames[i] + " == 1) | (" + colnames[j] + " == 1)";
+        RuleAnd[idx] = "(" + colnames[i] + " == 1 & " + colnames[j] + " == 1)";
+        RuleOr[idx] = "(" + colnames[i] + " == 1 | " + colnames[j] + " == 1)";
       }
 
       idx++;

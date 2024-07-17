@@ -10,10 +10,11 @@ build_logic_tree(
   columns,
   max_depth = 3,
   current_depth = 1,
-  parent_f1 = 0,
+  parent_score = 0,
   previous_rule = NULL,
   previous_rule_name = "",
-  best_info_env
+  best_info_env,
+  max_trees = 5
 )
 }
 \arguments{

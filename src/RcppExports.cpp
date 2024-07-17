@@ -40,10 +40,25 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// create_basis_functions
+DataFrame create_basis_functions(DataFrame data, CharacterVector columns, int num_knots, int precision);
+RcppExport SEXP _LogicHAL_create_basis_functions(SEXP dataSEXP, SEXP columnsSEXP, SEXP num_knotsSEXP, SEXP precisionSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< DataFrame >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< CharacterVector >::type columns(columnsSEXP);
+    Rcpp::traits::input_parameter< int >::type num_knots(num_knotsSEXP);
+    Rcpp::traits::input_parameter< int >::type precision(precisionSEXP);
+    rcpp_result_gen = Rcpp::wrap(create_basis_functions(data, columns, num_knots, precision));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_LogicHAL_computeF1ScoresWithLogic", (DL_FUNC) &_LogicHAL_computeF1ScoresWithLogic, 5},
     {"_LogicHAL_computeMeanDifferenceScoresWithLogic", (DL_FUNC) &_LogicHAL_computeMeanDifferenceScoresWithLogic, 5},
+    {"_LogicHAL_create_basis_functions", (DL_FUNC) &_LogicHAL_create_basis_functions, 4},
     {NULL, NULL, 0}
 };
 

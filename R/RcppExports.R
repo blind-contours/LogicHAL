@@ -9,3 +9,7 @@ computeMeanDifferenceScoresWithLogic <- function(data, columns, outcome, previou
     .Call('_LogicHAL_computeMeanDifferenceScoresWithLogic', PACKAGE = 'LogicHAL', data, columns, outcome, previous_rule, previous_rule_name)
 }
 
+create_basis_functions <- function(data, columns, num_knots = 0L, precision = 2L) {
+    .Call('_LogicHAL_create_basis_functions', PACKAGE = 'LogicHAL', data, columns, num_knots, precision)
+}
+

@@ -4,7 +4,15 @@
 \alias{LogicHAL}
 \title{LogicHAL: Iterative Tree Building and Lasso Fitting}
 \usage{
-LogicHAL(data, outcome, columns, max_trees = 5, max_depth = 3)
+LogicHAL(
+  data,
+  outcome,
+  columns,
+  max_trees = 5,
+  max_depth = 3,
+  family = "gaussian",
+  num_knots = 10
+)
 }
 \arguments{
 \item{data}{A data frame containing the features and the outcome variable.}
