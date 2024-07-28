@@ -6,16 +6,22 @@
 #'
 #' @param data A data frame containing the features and the outcome variable.
 #' @param outcome A character string specifying the name of the outcome variable.
-#' @param columns A character string indicating which columns to construct logic interactions
+#' @param columns A character vector indicating which columns to construct logic interactions.
 #' @param max_trees An integer specifying the maximum number of trees to build. Default is 5.
-#' @param max_depth An integer specifying the maximum depth of each tree. Default is 3.
-#' @param epsilon A numeric value specifying the improvement threshold for early stopping. Default is 1e-4.
+#' @param max_operators An integer specifying the maximum depth (based on logic operators) of each tree. Default is 3.
+#' @param family A character string specifying the family for the Lasso model. Default is "gaussian".
+#' @param num_knots An integer specifying the number of knots for creating basis functions. Default is 10.
+#' @param max_temperature Numeric. The maximum temperature for simulated annealing. Default is 1.
+#' @param min_temperature Numeric. The minimum temperature for simulated annealing. Default is 0.001.
+#' @param max_iterations Integer. The maximum number of iterations for the tree-building process. Default is 100.
+#' @param no_improvement_threshold Integer. The number of iterations without improvement to stop the process. Default is 10.
+#' @param num_cores Integer. The number of cores to use for parallel processing. Default is one less than the number of available cores.
 #'
 #' @return A list containing the final Lasso model and the logic trees used in the model.
 #' @examples
 #' # Assuming 'df' is your data frame and 'AGO_PR' is your outcome variable
 #' columns <- colnames(df)[grep("^KRFP", colnames(df))]
-#' result <- LogicHAL(df, "outcome", max_trees = 5, max_depth = 3)
+#' result <- LogicHAL(df, "AGO_PR", columns, max_operators = 5, max_depth = 3)
 #' print(result$model)
 #' print(result$trees)
 #' @import glmnet
@@ -23,10 +29,13 @@
 #' @importFrom Rcpp evalCpp
 #' @importFrom stringr str_extract_all
 #' @export
-LogicHAL <- function(data, outcome, columns, max_trees = 5, max_depth = 3, family = "gaussian", num_knots = 10) {
+LogicHAL <- function(data, outcome, columns, max_trees = 5, max_operators = 3, family = "gaussian",
+                     num_knots = 10, max_temperature = 1, min_temperature = 0.001,
+                     max_iterations = 100, no_improvement_threshold = 10, beam_width = 3,
+                     num_cores = detectCores() - 1, use_not_columns = TRUE) {
   # Helper function to fit Lasso
   fit_lasso <- function(features, outcome, family) {
-    model <- cv.glmnet(as.matrix(features), outcome, family = family, alpha = 1)
+    model <- cv.glmnet(as.matrix(features), outcome, family = family)
     return(model)
   }
 
@@ -49,17 +58,33 @@ LogicHAL <- function(data, outcome, columns, max_trees = 5, max_depth = 3, famil
     columns <- c(setdiff(columns, non_binary_columns), basis_function_names)
   }
 
+  if (use_not_columns == TRUE) {
+      not_data <- 1 - data[columns]
+      # Rename columns to indicate "Not"
+      colnames(not_data) <- paste0("Not_", colnames(not_data))
+      # Combine original and "Not" columns
+      data <- cbind(data, not_data)
+      columns <- c(columns, colnames(not_data))
+  }
 
-  # Build next best tree
-  best_info_env <- new.env()
-  best_info_env$best_scores <- rep(0, max_trees)
-  best_info_env$best_rule_paths <- list()
-  best_info_env$best_complexities <- rep(Inf, max_trees)
+  # Start the timer and run the function
+  time_taken_pairs <- system.time({
+    two_way_logic_roots <- compute_pairwise_logic_interactions_parallel(data, columns, outcome, num_cores = num_cores)
+  })
 
+  elapsed_time_pairs <- time_taken_pairs["elapsed"]
 
-  result <- build_logic_tree(data = data, outcome = outcome, columns = columns, max_depth = max_depth, best_info_env = best_info_env, max_trees = max_trees)
-  trees <- result$best_rule_path
-  scores <- result$best_scores
+  # time_taken_triplets <- system.time({
+  #   three_way_logic_roots <- compute_three_way_interactions_parallel(data, columns, outcome, num_cores = num_cores)
+  # })
+
+  result <- build_logic_trees_in_parallel(data, outcome, columns, max_operators, max_trees,
+                                          max_temperature, min_temperature, max_iterations,
+                                          no_improvement_threshold, num_cores, two_way_logic_roots, beam_width)
+  trees <- result$rule_path
+  scores <- result$score
+  complexities <- result$complexity
+
 
   # Extract features from paths
   path_features <- sapply(trees, function(path) as.numeric(eval(parse(text = path), envir = data)))

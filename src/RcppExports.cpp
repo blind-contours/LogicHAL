@@ -11,7 +11,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // computeF1ScoresWithLogic
-Rcpp::List computeF1ScoresWithLogic(DataFrame data, CharacterVector columns, IntegerVector outcome, Nullable<LogicalVector> previous_rule, std::string previous_rule_name);
+Rcpp::List computeF1ScoresWithLogic(DataFrame data, CharacterVector columns, IntegerVector outcome, LogicalVector previous_rule, std::string previous_rule_name);
 RcppExport SEXP _LogicHAL_computeF1ScoresWithLogic(SEXP dataSEXP, SEXP columnsSEXP, SEXP outcomeSEXP, SEXP previous_ruleSEXP, SEXP previous_rule_nameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -19,7 +19,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< DataFrame >::type data(dataSEXP);
     Rcpp::traits::input_parameter< CharacterVector >::type columns(columnsSEXP);
     Rcpp::traits::input_parameter< IntegerVector >::type outcome(outcomeSEXP);
-    Rcpp::traits::input_parameter< Nullable<LogicalVector> >::type previous_rule(previous_ruleSEXP);
+    Rcpp::traits::input_parameter< LogicalVector >::type previous_rule(previous_ruleSEXP);
     Rcpp::traits::input_parameter< std::string >::type previous_rule_name(previous_rule_nameSEXP);
     rcpp_result_gen = Rcpp::wrap(computeF1ScoresWithLogic(data, columns, outcome, previous_rule, previous_rule_name));
     return rcpp_result_gen;
@@ -37,6 +37,32 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Nullable<LogicalVector> >::type previous_rule(previous_ruleSEXP);
     Rcpp::traits::input_parameter< std::string >::type previous_rule_name(previous_rule_nameSEXP);
     rcpp_result_gen = Rcpp::wrap(computeMeanDifferenceScoresWithLogic(data, columns, outcome, previous_rule, previous_rule_name));
+    return rcpp_result_gen;
+END_RCPP
+}
+// computePairwiseLogicInteractions
+Rcpp::List computePairwiseLogicInteractions(DataFrame data, List pairs, IntegerVector outcome);
+RcppExport SEXP _LogicHAL_computePairwiseLogicInteractions(SEXP dataSEXP, SEXP pairsSEXP, SEXP outcomeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< DataFrame >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< List >::type pairs(pairsSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type outcome(outcomeSEXP);
+    rcpp_result_gen = Rcpp::wrap(computePairwiseLogicInteractions(data, pairs, outcome));
+    return rcpp_result_gen;
+END_RCPP
+}
+// computeThreeWayLogicInteractions
+Rcpp::List computeThreeWayLogicInteractions(DataFrame data, List triples, IntegerVector outcome);
+RcppExport SEXP _LogicHAL_computeThreeWayLogicInteractions(SEXP dataSEXP, SEXP triplesSEXP, SEXP outcomeSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< DataFrame >::type data(dataSEXP);
+    Rcpp::traits::input_parameter< List >::type triples(triplesSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type outcome(outcomeSEXP);
+    rcpp_result_gen = Rcpp::wrap(computeThreeWayLogicInteractions(data, triples, outcome));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -58,6 +84,8 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_LogicHAL_computeF1ScoresWithLogic", (DL_FUNC) &_LogicHAL_computeF1ScoresWithLogic, 5},
     {"_LogicHAL_computeMeanDifferenceScoresWithLogic", (DL_FUNC) &_LogicHAL_computeMeanDifferenceScoresWithLogic, 5},
+    {"_LogicHAL_computePairwiseLogicInteractions", (DL_FUNC) &_LogicHAL_computePairwiseLogicInteractions, 3},
+    {"_LogicHAL_computeThreeWayLogicInteractions", (DL_FUNC) &_LogicHAL_computeThreeWayLogicInteractions, 3},
     {"_LogicHAL_create_basis_functions", (DL_FUNC) &_LogicHAL_create_basis_functions, 4},
     {NULL, NULL, 0}
 };

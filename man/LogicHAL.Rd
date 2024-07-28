@@ -9,9 +9,16 @@ LogicHAL(
   outcome,
   columns,
   max_trees = 5,
-  max_depth = 3,
+  max_operators = 3,
   family = "gaussian",
-  num_knots = 10
+  num_knots = 10,
+  max_temperature = 1,
+  min_temperature = 0.001,
+  max_iterations = 100,
+  no_improvement_threshold = 10,
+  beam_width = 3,
+  num_cores = detectCores() - 1,
+  use_not_columns = TRUE
 )
 }
 \arguments{
@@ -19,13 +26,25 @@ LogicHAL(
 
 \item{outcome}{A character string specifying the name of the outcome variable.}
 
-\item{columns}{A character string indicating which columns to construct logic interactions}
+\item{columns}{A character vector indicating which columns to construct logic interactions.}
 
 \item{max_trees}{An integer specifying the maximum number of trees to build. Default is 5.}
 
-\item{max_depth}{An integer specifying the maximum depth of each tree. Default is 3.}
+\item{max_operators}{An integer specifying the maximum depth (based on logic operators) of each tree. Default is 3.}
 
-\item{epsilon}{A numeric value specifying the improvement threshold for early stopping. Default is 1e-4.}
+\item{family}{A character string specifying the family for the Lasso model. Default is "gaussian".}
+
+\item{num_knots}{An integer specifying the number of knots for creating basis functions. Default is 10.}
+
+\item{max_temperature}{Numeric. The maximum temperature for simulated annealing. Default is 1.}
+
+\item{min_temperature}{Numeric. The minimum temperature for simulated annealing. Default is 0.001.}
+
+\item{max_iterations}{Integer. The maximum number of iterations for the tree-building process. Default is 100.}
+
+\item{no_improvement_threshold}{Integer. The number of iterations without improvement to stop the process. Default is 10.}
+
+\item{num_cores}{Integer. The number of cores to use for parallel processing. Default is one less than the number of available cores.}
 }
 \value{
 A list containing the final Lasso model and the logic trees used in the model.
@@ -38,7 +57,7 @@ and removing used features at each iteration.
 \examples{
 # Assuming 'df' is your data frame and 'AGO_PR' is your outcome variable
 columns <- colnames(df)[grep("^KRFP", colnames(df))]
-result <- LogicHAL(df, "outcome", max_trees = 5, max_depth = 3)
+result <- LogicHAL(df, "AGO_PR", columns, max_operators = 5, max_depth = 3)
 print(result$model)
 print(result$trees)
 }

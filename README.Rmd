@@ -68,11 +68,10 @@ Y <- as.numeric((X[, 1] | X[, 8]) & (X[, 34]))
 df <- data.frame(X, outcome = Y)
 
 # Run LogicHAL
-result <- LogicHAL(data = df, outcome = "outcome", columns = colnames(X), max_trees = 2, max_depth = 3, family = "binomial")
+result <- LogicHAL(data = df, outcome = "outcome", columns = colnames(X), max_trees = 2, max_operators = 3, family = "binomial", max_iterations = 10, no_improvement_threshold = 2, beam_width = 1)
 
 # Print final model and trees used
 coef(result$model)
-
 ```
 
 ```{r continuous outcome example}
@@ -94,11 +93,10 @@ Y <- 30 * (X[, 1] | X[, 8]) + 20 * (X[, 34]) + rnorm(n, mean = 0, sd = 0.1)
 df <- data.frame(X, outcome = Y)
 
 # Run LogicHAL
-result <- LogicHAL(data = df, outcome = "outcome", columns = colnames(X), max_trees = 2, max_depth = 3, family = "gaussian")
+result <- LogicHAL(data = df, outcome = "outcome", columns = colnames(X), max_trees = 2, max_operators = 3, family = "gaussian")
 
 # Print final model and trees used
 coef(result$model)
-
 ```
 
 ```{r continuous variables example}
@@ -125,11 +123,10 @@ df$outcome <- 30 * (df$bin1 == 1 & df$cont1 < 50) + rnorm(n, mean = 0, sd = 1)
 # Define columns to be used in the model
 
 # Run LogicHAL
-result <- LogicHAL(data = df, outcome = "outcome", columns = columns, max_trees = 2, max_depth = 3, family = "gaussian")
+result <- LogicHAL(data = df, outcome = "outcome", columns = columns, max_trees = 2, max_operators = 3, family = "gaussian")
 
 # Print final model and trees used
 coef(result$model)
-
 ```
 
 

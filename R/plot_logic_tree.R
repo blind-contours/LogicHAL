@@ -12,13 +12,14 @@
 #' @import ggplot2
 #' @export
 plot_logic_tree <- function(tree) {
-
   # Create an empty igraph object
   g <- make_empty_graph(directed = TRUE)
 
   # Recursive function to add nodes and edges with edge coloring
   add_node <- function(graph, node, parent = NULL, edge_type = NULL) {
-    if (is.null(node)) return(graph)
+    if (is.null(node)) {
+      return(graph)
+    }
 
     # Extract split and F1 information
     vertex_label <- paste(node$split, "\nF1:", node$f1)
@@ -47,7 +48,7 @@ plot_logic_tree <- function(tree) {
   g <- add_node(g, tree)
 
   # Plot the graph using ggraph with customized legend
-  ggraph(g, layout = 'tree') +
+  ggraph(g, layout = "tree") +
     geom_edge_link(aes(edge_colour = color)) +
     geom_node_point(size = 5) +
     geom_node_text(aes(label = name), nudge_y = 0.2, repel = TRUE) +
