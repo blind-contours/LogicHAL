@@ -13,7 +13,9 @@ run_single_iteration(
   temperatures,
   two_way_logic_roots,
   beam_width,
-  no_improvement_threshold
+  no_improvement_threshold,
+  previous_rule_name,
+  best_info_env
 )
 }
 \arguments{

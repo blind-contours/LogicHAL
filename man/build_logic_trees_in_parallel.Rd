@@ -16,7 +16,9 @@ build_logic_trees_in_parallel(
   no_improvement_threshold,
   num_cores,
   two_way_logic_roots,
-  beam_width
+  beam_width,
+  n_exchange,
+  lasso_stability_threshold
 )
 }
 \arguments{

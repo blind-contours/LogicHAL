@@ -10,11 +10,12 @@ recursive_build_logic_tree(
   columns,
   max_operators,
   current_operators = 0,
-  parent_score = 0,
-  previous_rule = NULL,
-  previous_rule_name = "",
+  parent_scores = list(),
+  parent_rules = list(),
+  parent_rule_names = list(),
   best_info_env,
-  external_temperature,
+  temperatures,
+  temp_index_env,
   two_way_logic_roots,
   beam_width,
   max_trees
@@ -31,21 +32,21 @@ recursive_build_logic_tree(
 
 \item{current_operators}{An integer specifying the current number of logic operators in the rule (default is 0).}
 
-\item{parent_score}{A numeric value representing the score of the parent rule (default is 0).}
-
-\item{previous_rule}{A logical vector indicating whether each observation satisfies the previous rule (default is NULL).}
-
-\item{previous_rule_name}{A character string describing the previous rule (default is "").}
-
 \item{best_info_env}{An environment containing the best scores, rule paths, and complexities.}
-
-\item{external_temperature}{A numeric value for the external temperature, affecting the recursion depth.}
 
 \item{two_way_logic_roots}{A list containing precomputed scores and rules for two-way logic interactions.}
 
 \item{beam_width}{An integer specifying the number of indices to sample (beam width).}
 
 \item{max_trees}{An integer specifying the maximum number of top trees to consider (default is 10).}
+
+\item{parent_score}{A numeric value representing the score of the parent rule (default is 0).}
+
+\item{previous_rule}{A logical vector indicating whether each observation satisfies the previous rule (default is NULL).}
+
+\item{previous_rule_name}{A character string describing the previous rule (default is "").}
+
+\item{external_temperature}{A numeric value for the external temperature, affecting the recursion depth.}
 }
 \value{
 A list containing the tree structure, best scores, and best rule paths.

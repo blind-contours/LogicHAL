@@ -9,16 +9,18 @@ LogicHAL(
   outcome,
   columns,
   max_trees = 5,
-  max_operators = 3,
+  max_operators = 5,
   family = "gaussian",
   num_knots = 10,
   max_temperature = 1,
   min_temperature = 0.001,
-  max_iterations = 100,
+  max_iterations = 25,
   no_improvement_threshold = 10,
   beam_width = 3,
   num_cores = detectCores() - 1,
-  use_not_columns = TRUE
+  use_not_columns = TRUE,
+  n_exchange = 3,
+  lasso_stability_threshold = 3
 )
 }
 \arguments{

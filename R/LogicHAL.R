@@ -29,15 +29,10 @@
 #' @importFrom Rcpp evalCpp
 #' @importFrom stringr str_extract_all
 #' @export
-LogicHAL <- function(data, outcome, columns, max_trees = 5, max_operators = 3, family = "gaussian",
+LogicHAL <- function(data, outcome, columns, max_trees = 5, max_operators = 5, family = "gaussian",
                      num_knots = 10, max_temperature = 1, min_temperature = 0.001,
-                     max_iterations = 100, no_improvement_threshold = 10, beam_width = 3,
-                     num_cores = detectCores() - 1, use_not_columns = TRUE) {
-  # Helper function to fit Lasso
-  fit_lasso <- function(features, outcome, family) {
-    model <- cv.glmnet(as.matrix(features), outcome, family = family)
-    return(model)
-  }
+                     max_iterations = 25, no_improvement_threshold = 10, beam_width = 3,
+                     num_cores = detectCores() - 1, use_not_columns = TRUE, n_exchange = 3, lasso_stability_threshold = 3) {
 
   # Helper function to check if a column is binary
   is_binary_column <- function(column) {
@@ -80,7 +75,10 @@ LogicHAL <- function(data, outcome, columns, max_trees = 5, max_operators = 3, f
 
   result <- build_logic_trees_in_parallel(data, outcome, columns, max_operators, max_trees,
                                           max_temperature, min_temperature, max_iterations,
-                                          no_improvement_threshold, num_cores, two_way_logic_roots, beam_width)
+                                          no_improvement_threshold, num_cores,
+                                          two_way_logic_roots, beam_width,
+                                          n_exchange, lasso_stability_threshold,
+                                          family)
   trees <- result$rule_path
   scores <- result$score
   complexities <- result$complexity

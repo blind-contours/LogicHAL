@@ -80,6 +80,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// compute_merge_trees
+DataFrame compute_merge_trees(CharacterVector rules, IntegerVector true_labels, List data);
+RcppExport SEXP _LogicHAL_compute_merge_trees(SEXP rulesSEXP, SEXP true_labelsSEXP, SEXP dataSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< CharacterVector >::type rules(rulesSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type true_labels(true_labelsSEXP);
+    Rcpp::traits::input_parameter< List >::type data(dataSEXP);
+    rcpp_result_gen = Rcpp::wrap(compute_merge_trees(rules, true_labels, data));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_LogicHAL_computeF1ScoresWithLogic", (DL_FUNC) &_LogicHAL_computeF1ScoresWithLogic, 5},
@@ -87,6 +100,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_LogicHAL_computePairwiseLogicInteractions", (DL_FUNC) &_LogicHAL_computePairwiseLogicInteractions, 3},
     {"_LogicHAL_computeThreeWayLogicInteractions", (DL_FUNC) &_LogicHAL_computeThreeWayLogicInteractions, 3},
     {"_LogicHAL_create_basis_functions", (DL_FUNC) &_LogicHAL_create_basis_functions, 4},
+    {"_LogicHAL_compute_merge_trees", (DL_FUNC) &_LogicHAL_compute_merge_trees, 3},
     {NULL, NULL, 0}
 };
 

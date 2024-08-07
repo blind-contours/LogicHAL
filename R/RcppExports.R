@@ -21,3 +21,7 @@ create_basis_functions <- function(data, columns, num_knots = 0L, precision = 2L
     .Call('_LogicHAL_create_basis_functions', PACKAGE = 'LogicHAL', data, columns, num_knots, precision)
 }
 
+compute_merge_trees <- function(rules, true_labels, data) {
+    .Call('_LogicHAL_compute_merge_trees', PACKAGE = 'LogicHAL', rules, true_labels, data)
+}
+

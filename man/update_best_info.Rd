@@ -4,7 +4,7 @@
 \alias{update_best_info}
 \title{Update the Best Scores and Rule Paths in the Best Info Environment}
 \usage{
-update_best_info(score, rule_desc, best_info_env)
+update_best_info(score, rule_desc, best_info_env, internal_temperature)
 }
 \arguments{
 \item{score}{A numeric value representing the score of the current rule.}

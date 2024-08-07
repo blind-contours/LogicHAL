@@ -7,11 +7,12 @@
 create_subtree(
   scores,
   rules,
-  parent_score,
-  parent_rule,
-  parent_rule_name,
+  parent_scores,
+  parent_rules,
+  parent_rule_names,
   internal_temperature,
-  external_temperature,
+  temperatures,
+  temp_index_env,
   data,
   outcome,
   columns,
@@ -28,15 +29,7 @@ create_subtree(
 
 \item{rules}{A character vector of rule descriptions corresponding to the scores.}
 
-\item{parent_score}{A numeric value representing the score of the parent rule.}
-
-\item{parent_rule}{A logical vector indicating whether each observation satisfies the parent rule.}
-
-\item{parent_rule_name}{A character string describing the parent rule.}
-
 \item{internal_temperature}{A numeric value for the internal temperature used in the Boltzmann distribution.}
-
-\item{external_temperature}{A numeric value for the external temperature, affecting the recursion depth.}
 
 \item{data}{A data frame containing the dataset.}
 
@@ -53,6 +46,14 @@ create_subtree(
 \item{two_way_logic_roots}{A list containing precomputed scores and rules for two-way logic interactions.}
 
 \item{beam_width}{An integer specifying the number of indices to sample (beam width).}
+
+\item{parent_score}{A numeric value representing the score of the parent rule.}
+
+\item{parent_rule}{A logical vector indicating whether each observation satisfies the parent rule.}
+
+\item{parent_rule_name}{A character string describing the parent rule.}
+
+\item{external_temperature}{A numeric value for the external temperature, affecting the recursion depth.}
 }
 \value{
 A list of subtrees created based on the selected rules and their scores.

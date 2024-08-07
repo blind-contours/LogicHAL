@@ -18,39 +18,70 @@
 #' run_single_iteration(data, outcome = "y", columns = c("x1", "x2"), max_operators = 3, initial_temperature = 1, min_temperature = 0.01, max_iterations = 100)
 #'
 #' @export
-run_single_iteration <- function(data, outcome, columns, max_operators, max_trees, temperatures, two_way_logic_roots, beam_width, no_improvement_threshold) {
-  best_info_env <- new.env()
-  best_info_env$best_scores <- rep(-Inf, max_trees)
-  best_info_env$best_rule_paths <- vector("list", max_trees)
-  best_info_env$best_complexities <- rep(Inf, max_trees)
+run_single_iteration <- function(data, outcome, columns, max_operators, max_trees, temperatures, two_way_logic_roots, beam_width, no_improvement_threshold, previous_rule_name, best_info_env) {
 
-  total_iterations <- 0
-  iteration_counter <- 0
+  temp_index_env <- new.env()
+  temp_index_env$current_index <- 1  # Initialize the index
+
   no_improvement_counter <- 0
   previous_best_info <- list(scores = best_info_env$best_scores, paths = best_info_env$best_rule_paths)
 
   max_iterations <- length(temperatures)
 
-  while (total_iterations < max_iterations && no_improvement_counter < no_improvement_threshold) {
-    external_temperature <- temperatures[total_iterations + 1]
-    iteration_time <- system.time({
-      result <- recursive_build_logic_tree(data, outcome, columns, max_operators, current_operators = 1, parent_score = 0, previous_rule = NULL, previous_rule_name = "", best_info_env = best_info_env, external_temperature, two_way_logic_roots, beam_width, max_trees)
-    })
+  if (is.null(previous_rule_name)) {
+    parent_rule_names <- list()
+    parent_rules <- list()
+    parent_scores <- list()
+  } else{
+    parent_rule_names <- list()
+    parent_rules <- list()
+    parent_scores <- list()
+    parent_rule_names[[1]] <- previous_rule_name
 
-    total_iterations <- total_iterations + 1
-    iteration_counter <- iteration_counter + 1
+    previous_rule <- data %>%
+      mutate(rule = eval(parse(text = previous_rule_name))) %>%
+      pull(rule)
+
+    parent_scores[[1]] <- calculate_f1_score(previous_rule, data[[outcome]])
+
+    parent_rules[[1]] <- previous_rule
+  }
+
+  # Flag to check if first iteration with previous rule
+  first_iteration_with_previous <- TRUE
+
+  while (temp_index_env$current_index < max_iterations && no_improvement_counter < no_improvement_threshold) {
+    iteration_time <- system.time({
+      result <- recursive_build_logic_tree(data, outcome, columns, max_operators,
+                                           current_operators = 1,
+                                           parent_scores = parent_scores,
+                                           parent_rules = parent_rules,
+                                           parent_rule_names = parent_rule_names,
+                                           best_info_env = best_info_env,
+                                           temperatures = temperatures,
+                                           temp_index_env = temp_index_env,
+                                           two_way_logic_roots,
+                                           beam_width, max_trees)
+    })
 
     # Check for improvement
     if (!identical(previous_best_info$scores, best_info_env$best_scores)) {
       no_improvement_counter <- 0
       previous_best_info$scores <- best_info_env$best_scores
+
+      # If improvement is made, continue using the previous rule
+      first_iteration_with_previous <- FALSE
     } else {
       no_improvement_counter <- no_improvement_counter + 1
+
+      # Reset to logic roots if no improvement and it's not the first iteration with the previous rule
+      if (first_iteration_with_previous) {
+        previous_rule_name <- ""
+        previous_rule <- NULL
+        first_iteration_with_previous <- FALSE
+      }
     }
   }
 
-  return(list(
-    best_scores = best_info_env$best_scores,
-    best_rule_paths = best_info_env$best_rule_paths
-  ))
+  return(best_info_env)
 }

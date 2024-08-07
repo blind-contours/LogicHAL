@@ -68,7 +68,7 @@ Y <- as.numeric((X[, 1] | X[, 8]) & (X[, 34]))
 df <- data.frame(X, outcome = Y)
 
 # Run LogicHAL
-result <- LogicHAL(data = df, outcome = "outcome", columns = colnames(X), max_trees = 2, max_operators = 3, family = "binomial", max_iterations = 10, no_improvement_threshold = 2, beam_width = 1)
+result <- LogicHAL(data = df, outcome = "outcome", columns = colnames(X), max_trees = 2, max_operators = 3, family = "binomial", max_iterations = 600, no_improvement_threshold = 2, beam_width = 2, num_cores = 6, lasso_stability_threshold = 2)
 
 # Print final model and trees used
 coef(result$model)
@@ -118,7 +118,7 @@ columns <- colnames(df)
 
 # Create a continuous outcome based on a logic statement with added noise
 # Example logic: outcome is high if bin1 == 1 and cont1 < 50
-df$outcome <- 30 * (df$bin1 == 1 & df$cont1 < 50) + rnorm(n, mean = 0, sd = 1)
+df$outcome <- 30 * (df$bin1 == 1 & df$cont1 < 50) + 20 * df$cont2 < 30 +  rnorm(n, mean = 0, sd = 1)
 
 # Define columns to be used in the model
 

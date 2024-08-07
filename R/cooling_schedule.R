@@ -45,6 +45,8 @@ compute_temperature_schedule <- function(max_iterations, max_temperature, min_te
       min_temperature + (i - 1) * ((max_temperature - min_temperature) / (max_iterations - mid_point - 1))
     })
     return(c(first_half, second_half))
+  } else if (type == "exponential") {
+    return(max_temperature * exp(seq(log(1), log(min_temperature / max_temperature), length.out = max_iterations)))
   } else {
     stop("Unknown cooling schedule type")
   }
